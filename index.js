@@ -18,11 +18,18 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+// whoami endpoint
+app.get("/api/whoami/", (req, res) => res.json({
+  ipaddress: req.ip,
+  language: req.headers["accept-language"],
+  software: req.headers["user-agent"]
+})
+);
+
 // date endpoint
-app.get("/api/:date?", function (req, res) {
-  let d = req.params.date;
-  res.json(dateResponseFormatter(d));
-});
+app.get("/api/:date?", (req, res) =>
+  res.json(dateResponseFormatter(req.params.date))
+);
 
 const dateResponseFormatter = (string) => {
   let date = parser(string)
