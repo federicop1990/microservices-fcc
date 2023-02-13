@@ -20,6 +20,9 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+
+
+
 // whoami endpoint
 app.get("/api/whoami/", (req, res) => res.json({
   ipaddress: req.ip,
@@ -76,7 +79,33 @@ const parser = (string) => {
   return !string ? new Date() : string.match(/^\d+$/) ? new Date(parseInt(string)) : new Date(string);
 }
 
+
+// file analysis functions
+// multer
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB
+    files: 1, // only allow 1 file to be uploaded
+    fields: 1,
+  },
+});
+
+app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
+  const file = req.file;
+  const json = {
+    name: file.originalname,
+    type: file.mimetype,
+    size: file.size,
+  };
+  console.log(json);
+  return res.json(json);
+});
+
+
 // listen for requests :)
-var listener = app.listen(3333 || process.env.PORT, function () {
+var listener = app.listen(3000 || process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
